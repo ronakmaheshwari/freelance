@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import { jobApplicantModal, jobListingModal, userModal } from "../db.js"
 import { JWT_SECRET, saltrounds } from "../index.js"
+import { authMiddleware } from "../middleware.js"
 
 const userRouter = express.Router()
 
@@ -71,40 +72,7 @@ userRouter.post("/signin",async(req:any,res:any)=>{
     }
 })
 
-userRouter.post("/apply",async(req:any, res:any)=>{
-   try{
-    const {jobId, resumeUrl} = req.body;
-    const AlreadyApplied = await jobApplicantModal.findOne({ jobId: jobId, "users.userId": req.userId })
-
-    if (AlreadyApplied) {
-        return res.status(400).json({ message: "You have already applied for this job!" });
-    }
-
-    const application = await jobApplicantModal.findOneAndUpdate(
-        { jobId: jobId }, 
-        {
-            $push: {
-                users: {
-                    userId: req.userId,
-                    resume_url: resumeUrl,
-                    status: "pending",
-                    appliedAt: new Date()
-                }
-            }
-        },
-        { new: true, upsert: true } 
-    );
-
-    res.status(200).json({ message: "Application submitted successfully", application });
-   }catch(error){
-        console.log(error);
-        return res.status(404).json({
-            message:"Internal Error Occured"
-        })
-   }
-})
-
-userRouter.get("/applied",async(req:any, res:any)=>{
+userRouter.get("/applied",authMiddleware,async(req:any, res:any)=>{
     try{
         const response = await jobApplicantModal.find({
             "users.userId": req.userId  

@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import { adminModal, companyModal, jobListingModal } from "../db.js"
 import { JWT_SECRET, saltrounds } from "../index.js"
+import { adminMiddleware } from "../middleware.js"
 
 const adminRouter = express.Router()
 
@@ -107,7 +108,7 @@ adminRouter.post("/signin",async(req:any,res:any)=>{
     }
 })
 
-adminRouter.post("/create",async(req:any, res:any) => {
+adminRouter.post("/create",adminMiddleware,async(req:any, res:any) => {
     try {
         const { title, description, location, salaryRange, jobType, companyId } = req.body;
         const creatorId = req.adminId;
@@ -144,7 +145,7 @@ adminRouter.post("/create",async(req:any, res:any) => {
     }
 });
 
-adminRouter.get("/",async(req:any, res:any)=>{
+adminRouter.get("/",adminMiddleware,async(req:any, res:any)=>{
     try{
         const creatorId=req.adminId
         const companyId = req.companyId
@@ -168,7 +169,7 @@ adminRouter.get("/",async(req:any, res:any)=>{
     }
 })
 
-adminRouter.get("/adminjob",async(req:any, res:any)=>{
+adminRouter.get("/job",adminMiddleware,async(req:any, res:any)=>{
     try{
         const creatorId=req.adminId
         const companyId = req.companyId
@@ -192,7 +193,7 @@ adminRouter.get("/adminjob",async(req:any, res:any)=>{
     }
 })
 
-adminRouter.get("/admins", async(req:any, res:any) => {
+adminRouter.get("/admins",adminMiddleware,async(req:any, res:any) => {
     try {
         const creatorId = req.adminId; 
         const companyId = req.companyId; 
