@@ -119,16 +119,4 @@ userRouter.get("/applied",async(req:any, res:any)=>{
     }
 })
 
-userRouter.get("/jobs",async(req:any, res:any)=>{
-    try{
-        const response = await jobListingModal.find().select("title description location salaryRange jobType");
-        res.status(200).json({response})
-    }catch(error){
-        console.log(error);
-        return res.status(404).json({
-            message:"Internal Error Occured"
-        })
-    }
-})
-
 export {userRouter}

@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-mongoose.connect("mongodb+srv://ronak:difN0qPVinoTH791@cluster0.gq8an.mongodb.net/freelance")
+mongoose.connect("")
 
 const userSchema = new Schema({
     fullName: {type:String, required:true},
@@ -18,6 +18,7 @@ const adminSchema = new Schema({
 })
 
 const companySchema = new Schema({
+    createdBy:{type: mongoose.Schema.Types.ObjectId, ref: "admin", required: true, unique: true},
     name: {type:String, required:true, unique:true},
     description:{type:String, required:true},
     web_url: {type:String},
@@ -60,7 +61,8 @@ const jobapplicationSchema = new Schema({
 
 const userModal = mongoose.model("user",userSchema)
 const adminModal = mongoose.model("admin", adminSchema)
+const companyModal = mongoose.model("company", companySchema)
 const jobListingModal = mongoose.model("joblisting",joblistingSchema)
 const jobApplicantModal = mongoose.model("jobapplication",jobapplicationSchema)
 
-export {userModal,adminModal,jobListingModal,jobApplicantModal}
+export {userModal,companyModal,adminModal,jobListingModal,jobApplicantModal}
