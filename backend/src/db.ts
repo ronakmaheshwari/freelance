@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-mongoose.connect("")
+mongoose.connect("mongodb+srv://ronak:difN0qPVinoTH791@cluster0.gq8an.mongodb.net/freelance")
 
 const userSchema = new Schema({
     fullName: {type:String, required:true},
@@ -14,7 +14,6 @@ const adminSchema = new Schema({
     email: {type:String,unique:true, required:true},
     password:{type:String,required:true},
     bio: {type:String,required:true},
-    companyId: { type: mongoose.Schema.Types.ObjectId, ref: "company", required: true }
 })
 
 const companySchema = new Schema({

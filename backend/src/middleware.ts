@@ -44,15 +44,15 @@ const adminMiddleware = (req: any, res: any, next: NextFunction) => {
     try {
         const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
 
-        if (decoded.adminId) {
+        if (decoded.adminId && decoded.companyId) {
             req.adminId = decoded.adminId;
-            req.companyId = decoded.companyId; 
-            next();
-        }else{
-            return res.status(403).json({ message: "Invalid token" });
+            req.companyId = decoded.companyId;
+            return next();
+        } else {
+            return res.status(403).json({ message: "Invalid token payload" });
         }
+        
     } catch (err) {
-
         return res.status(401).json({ message: "Invalid or expired token" });
     }
 };

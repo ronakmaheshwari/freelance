@@ -7,84 +7,96 @@ import { authMiddleware } from "../middleware.js"
 
 const userRouter = express.Router()
 
-userRouter.post("/signup",async(req:any,res:any)=>{
-    try{
-        const {fullName, email, password, bio} = req.body
-        const ExistingUser = await userModal.findOne({email})
-        if(ExistingUser){
-            return res.status(404).json({
-                message:"Email Already Exists"
-            })
+userRouter.post("/signup", async (req: any, res: any) => {
+    try {
+        const { fullName, email, password, bio } = req.body;
+
+        const existingUser = await userModal.findOne({ email });
+        if (existingUser) {
+            return res.status(409).json({
+                message: "Email already exists"
+            });
         }
-        const hash = await bcrypt.hash(password, saltrounds)
-        const response = await userModal.create({
+
+        const hashedPassword = await bcrypt.hash(password, saltrounds);
+
+        const newUser = await userModal.create({
             fullName,
             email,
-            password:hash,
+            password: hashedPassword,
             bio
-        })
-        const id = response._id
-        const token = jwt.sign({userId: id}, JWT_SECRET)
-        return res.status(200).json({
-            message:"User Successfully Added",
-            token: token
-        })
-    }catch(error){
-        console.log(error);
-        return res.status(404).json({
-            message:"Internal Error Occured"
-        })
-    }
-})
+        });
 
-userRouter.post("/signin",async(req:any,res:any)=>{
-    try{
-        const {email, password} = req.body
-        const ExistingUser = await userModal.findOne({email})
-        
-        if(!ExistingUser){
+        const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, { expiresIn: "7d" });
+
+        return res.status(201).json({
+            message: "User successfully registered",
+            token
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+});
+
+userRouter.post("/signin", async (req: any, res: any) => {
+    try {
+        const { email, password } = req.body;
+
+        const existingUser = await userModal.findOne({ email });
+        if (!existingUser) {
             return res.status(404).json({
-                message:"Email Already Exists"
-            })
-        }
-        
-        if (!ExistingUser.password) {
-            return res.status(400).json({ message: "Password is missing for this user" });
+                message: "User not found. Please sign up first."
+            });
         }
 
-        const IsPasswordCorrect = await bcrypt.compare(password, ExistingUser.password)
-
-        if(!IsPasswordCorrect){
-            return  res.status(400).json({ message: "Password Provided Is Wrong" });
+        if (!existingUser.password) {
+            return res.status(400).json({ message: "Password is missing for this user." });
         }
-        const id = ExistingUser._id
 
-        const token = jwt.sign({userId: id}, JWT_SECRET)
+        const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
+        if (!isPasswordCorrect) {
+            return res.status(401).json({ message: "Incorrect password." });
+        }
+
+        const token = jwt.sign({ userId: existingUser._id }, JWT_SECRET, { expiresIn: "7d" });
 
         return res.status(200).json({
-            token: token
-        })
-    }catch(error){
-        console.log(error);
-        return res.status(404).json({
-            message:"Internal Error Occured"
-        })
-    }
-})
+            message: "Login successful.",
+            token
+        });
 
-userRouter.get("/applied",authMiddleware,async(req:any, res:any)=>{
-    try{
-        const response = await jobApplicantModal.find({
-            "users.userId": req.userId  
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Internal server error."
+        });
+    }
+});
+ 
+userRouter.get("/applied", authMiddleware, async (req: any, res: any) => {
+    try {
+        const userId = req.userId;
+
+        const applications = await jobApplicantModal.find({
+            "users.userId": userId
         }).populate("jobId");
 
-        res.status(200).json({response})
-    }catch(error){
-        console.log(error);
-        return res.status(404).json({
-            message:"Internal Error Occured"
-        })
+        return res.status(200).json({
+            message: "Fetched applied jobs successfully.",
+            applications
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Internal server error."
+        });
     }
-})
+}); 
+
 
 export {userRouter}

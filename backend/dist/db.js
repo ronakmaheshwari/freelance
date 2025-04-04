@@ -11,7 +11,6 @@ const adminSchema = new Schema({
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
     bio: { type: String, required: true },
-    companyId: { type: mongoose.Schema.Types.ObjectId, ref: "company", required: true }
 });
 const companySchema = new Schema({
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "admin", required: true, unique: true },
