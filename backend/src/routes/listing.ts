@@ -4,7 +4,7 @@ import { authMiddleware } from "../middleware.js";
 
 const listingRouter = express.Router()
 
-listingRouter.get("/jobs", authMiddleware, async (req: any, res: any) => {
+listingRouter.get("/", authMiddleware, async (req: any, res: any) => {
     try {
         const filter = req.query.filter?.toString() || "";
 
@@ -13,7 +13,7 @@ listingRouter.get("/jobs", authMiddleware, async (req: any, res: any) => {
                 { title: { $regex: filter, $options: "i" } },
                 { description: { $regex: filter, $options: "i" } }
             ]
-        }).select("title description location salaryRange jobType");
+        }).select("title description location salaryRange jobType companyId creatorId").populate("companyId", "name").populate("creatorId", "fullName");
 
         return res.status(200).json({
             message: "Jobs fetched successfully.",

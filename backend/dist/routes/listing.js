@@ -2,7 +2,7 @@ import express from "express";
 import { jobApplicantModal, jobListingModal } from "../db.js";
 import { authMiddleware } from "../middleware.js";
 const listingRouter = express.Router();
-listingRouter.get("/jobs", authMiddleware, async (req, res) => {
+listingRouter.get("/", authMiddleware, async (req, res) => {
     try {
         const filter = req.query.filter?.toString() || "";
         const jobs = await jobListingModal.find({
@@ -10,7 +10,7 @@ listingRouter.get("/jobs", authMiddleware, async (req, res) => {
                 { title: { $regex: filter, $options: "i" } },
                 { description: { $regex: filter, $options: "i" } }
             ]
-        }).select("title description location salaryRange jobType");
+        }).select("title description location salaryRange jobType companyId creatorId").populate("companyId", "name").populate("creatorId", "fullName");
         return res.status(200).json({
             message: "Jobs fetched successfully.",
             jobs
