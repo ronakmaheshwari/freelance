@@ -98,5 +98,61 @@ userRouter.get("/applied", authMiddleware, async (req: any, res: any) => {
     }
 }); 
 
+userRouter.get("/getdetail", authMiddleware, async (req: any, res: any) => {
+    try {
+        const userId = req.userId;
+        console.log(userId)
+        const detail = await userModal.findById(userId).select("-password"); 
+
+        if (!detail) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        return res.status(200).json({ detail });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Internal server error."
+        });
+    }
+});
+
+
+userRouter.patch("/update", authMiddleware, async (req: any, res: any) => {
+    try {
+        const userId = req.userId;
+        const { fullName, email, password, bio } = req.body;
+
+        let updateData: any = { fullName, email, bio };
+
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, saltrounds);
+            updateData.password = hashedPassword;
+        }
+
+        const updatedUser = await userModal.findByIdAndUpdate(
+            userId,
+            updateData,
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        return res.status(200).json({
+            message: "User updated successfully.",
+            user: updatedUser
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Internal server error."
+        });
+    }
+});
+
 
 export {userRouter}

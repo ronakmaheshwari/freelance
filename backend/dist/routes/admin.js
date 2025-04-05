@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { companyModal, jobListingModal, userModal } from "../db.js";
 import { JWT_SECRET, saltrounds } from "../index.js";
-import { adminMiddleware, authMiddleware } from "../middleware.js";
+import { adminMiddleware } from "../middleware.js";
 const adminRouter = express.Router();
 adminRouter.post("/signup", async (req, res) => {
     try {
@@ -29,8 +29,10 @@ adminRouter.post("/signup", async (req, res) => {
             name,
             description,
             web_url,
-            admins: [creatorId]
+            admins: []
         });
+        company.admins.push(creatorId);
+        await company.save();
         const token = jwt.sign({ adminId: creatorId, companyId: company._id }, JWT_SECRET, { expiresIn: "7d" });
         return res.status(201).json({
             message: "Admin and company have been created",
@@ -42,7 +44,7 @@ adminRouter.post("/signup", async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 });
-adminRouter.post("/addadmin", authMiddleware, async (req, res) => {
+adminRouter.post("/addadmin", adminMiddleware, async (req, res) => {
     try {
         const adminId = req.adminId;
         const companyId = req.companyId;
@@ -58,11 +60,19 @@ adminRouter.post("/addadmin", authMiddleware, async (req, res) => {
             password: hashedPassword,
             bio
         });
-        const updatedCompany = await companyModal.findByIdAndUpdate(companyId, { $push: { admins: newAdmin._id } }, { new: true });
+        const updatedCompany = await companyModal.findByIdAndUpdate(companyId, { $addToSet: { admins: newAdmin._id } }, { new: true }).populate("admins", "-password -__v");
+        if (!updatedCompany) {
+            return res.status(404).json({ message: "Company not found" });
+        }
         return res.status(201).json({
             message: "New admin added successfully",
-            newAdmin,
-            updatedCompany
+            admin: {
+                _id: newAdmin._id,
+                fullName: newAdmin.fullName,
+                email: newAdmin.email,
+                bio: newAdmin.bio
+            },
+            company: updatedCompany
         });
     }
     catch (error) {
@@ -70,17 +80,25 @@ adminRouter.post("/addadmin", authMiddleware, async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 });
+const VALID_JOB_TYPES = [
+    "full-time", "part-time", "internship"
+];
 adminRouter.post("/create", adminMiddleware, async (req, res) => {
     try {
         const { title, description, location, salaryRange, jobType } = req.body;
         const creatorId = req.adminId;
         const companyId = req.companyId;
+        if (!VALID_JOB_TYPES.includes(jobType)) {
+            return res.status(400).json({
+                message: `Invalid job type. Valid types are: ${VALID_JOB_TYPES.join(", ")}`
+            });
+        }
         const adminExists = await userModal.findById(creatorId);
         if (!adminExists) {
             return res.status(404).json({ message: "Admin not found!" });
         }
-        const companyExists = await companyModal.findOne({ _id: companyId, admins: creatorId });
-        if (!companyExists) {
+        const company = await companyModal.findOne({ _id: companyId, admins: creatorId });
+        if (!company) {
             return res.status(403).json({ message: "Unauthorized: Admin is not part of this company!" });
         }
         const newJob = await jobListingModal.create({
@@ -99,7 +117,7 @@ adminRouter.post("/create", adminMiddleware, async (req, res) => {
         });
     }
     catch (error) {
-        console.error(error);
+        console.error("Job creation error:", error);
         return res.status(500).json({ message: "Internal Server Error" });
     }
 });
@@ -156,8 +174,7 @@ adminRouter.get("/admins", adminMiddleware, async (req, res) => {
     try {
         const companyId = req.companyId;
         const company = await companyModal
-            .findOne({ _id: companyId })
-            .populate("admins", "-password -__v");
+            .findOne({ _id: companyId });
         if (!company) {
             return res.status(404).json({ message: "Company not found!" });
         }

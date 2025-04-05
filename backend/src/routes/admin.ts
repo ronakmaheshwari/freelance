@@ -22,6 +22,7 @@ adminRouter.post("/signup", async (req: any, res: any) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, saltrounds);
+
         const user = await userModal.create({
             fullName,
             email,
@@ -36,8 +37,11 @@ adminRouter.post("/signup", async (req: any, res: any) => {
             name,
             description,
             web_url,
-            admins: [creatorId]
+            admins: [] 
         });
+
+        company.admins.push(creatorId);
+        await company.save(); 
 
         const token = jwt.sign(
             { adminId: creatorId, companyId: company._id },
@@ -56,7 +60,8 @@ adminRouter.post("/signup", async (req: any, res: any) => {
     }
 });
 
-adminRouter.post("/addadmin", authMiddleware, async (req: any, res: any) => {
+
+adminRouter.post("/addadmin", adminMiddleware, async (req: any, res: any) => {
     try {
         const adminId = req.adminId; 
         const companyId = req.companyId;
@@ -79,14 +84,23 @@ adminRouter.post("/addadmin", authMiddleware, async (req: any, res: any) => {
 
         const updatedCompany = await companyModal.findByIdAndUpdate(
             companyId,
-            { $push: { admins: newAdmin._id } },
+            { $addToSet: { admins: newAdmin._id } }, 
             { new: true }
-        );
+        ).populate("admins", "-password -__v");
+
+        if (!updatedCompany) {
+            return res.status(404).json({ message: "Company not found" });
+        }
 
         return res.status(201).json({
             message: "New admin added successfully",
-            newAdmin,
-            updatedCompany
+            admin: {
+                _id: newAdmin._id,
+                fullName: newAdmin.fullName,
+                email: newAdmin.email,
+                bio: newAdmin.bio
+            },
+            company: updatedCompany
         });
 
     } catch (error) {
@@ -95,43 +109,54 @@ adminRouter.post("/addadmin", authMiddleware, async (req: any, res: any) => {
     }
 });
 
-adminRouter.post("/create", adminMiddleware, async (req: any, res: any) => {
-    try {
-        const { title, description, location, salaryRange, jobType } = req.body;
-        const creatorId = req.adminId;
-        const companyId = req.companyId; 
+const VALID_JOB_TYPES = [
+    "full-time", "part-time", "internship"
+  ];
+  
+  adminRouter.post("/create", adminMiddleware, async (req: any, res: any) => {
+      try {
+          const { title, description, location, salaryRange, jobType } = req.body;
+          const creatorId = req.adminId;
+          const companyId = req.companyId;
+  
+          if (!VALID_JOB_TYPES.includes(jobType)) {
+              return res.status(400).json({
+                  message: `Invalid job type. Valid types are: ${VALID_JOB_TYPES.join(", ")}`
+              });
+          }
 
-        const adminExists = await userModal.findById(creatorId); 
-        if (!adminExists) {
-            return res.status(404).json({ message: "Admin not found!" });
-        }
-
-        const companyExists = await companyModal.findOne({ _id: companyId, admins: creatorId });
-        if (!companyExists) {
-            return res.status(403).json({ message: "Unauthorized: Admin is not part of this company!" });
-        }
-
-        const newJob = await jobListingModal.create({
-            companyId,
-            creatorId,
-            title,
-            description,
-            location,
-            salaryRange,
-            jobType,
-            jobApplicants: []
-        });
-
-        return res.status(201).json({
-            message: "Job listing created successfully!",
-            job: newJob
-        });
-
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Internal Server Error" });
-    }
-});
+          const adminExists = await userModal.findById(creatorId);
+          if (!adminExists) {
+              return res.status(404).json({ message: "Admin not found!" });
+          }
+  
+          const company = await companyModal.findOne({ _id: companyId, admins: creatorId });
+          if (!company) {
+              return res.status(403).json({ message: "Unauthorized: Admin is not part of this company!" });
+          }
+  
+          const newJob = await jobListingModal.create({
+              companyId,
+              creatorId,
+              title,
+              description,
+              location,
+              salaryRange,
+              jobType,
+              jobApplicants: []
+          });
+  
+          return res.status(201).json({
+              message: "Job listing created successfully!",
+              job: newJob
+          });
+  
+      } catch (error) {
+          console.error("Job creation error:", error);
+          return res.status(500).json({ message: "Internal Server Error" });
+      }
+  });
+  
 
 adminRouter.get("/", adminMiddleware, async (req: any, res: any) => {
     try {
@@ -200,7 +225,7 @@ adminRouter.get("/admins", adminMiddleware, async (req: any, res: any) => {
 
         const company = await companyModal
             .findOne({ _id: companyId })
-            .populate("admins", "-password -__v");
+            
 
         if (!company) {
             return res.status(404).json({ message: "Company not found!" });

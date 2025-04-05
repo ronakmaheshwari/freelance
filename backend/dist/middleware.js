@@ -9,7 +9,7 @@ const authMiddleware = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
         if ("userId" in decoded) {
-            req.userid = decoded.userId;
+            req.userId = decoded.userId;
             next();
         }
         else {
