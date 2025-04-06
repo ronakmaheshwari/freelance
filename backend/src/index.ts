@@ -3,7 +3,8 @@ import morgan from "morgan"
 import jwt from "jsonwebtoken"
 import cors from "cors"
 import mongoose from "mongoose" 
-import bcrypt from "bcrypt"
+// import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs";
 import { router } from "./routes/index.js"
 import dotenv from "dotenv"
 

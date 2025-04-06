@@ -1,6 +1,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs";
 import { jobApplicantModal, userModal } from "../db.js";
 import { JWT_SECRET, saltrounds } from "../index.js";
 import { authMiddleware } from "../middleware.js";
