@@ -1,7 +1,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { adminModal, companyModal, jobListingModal } from "../db.js";
+import { adminModal, companyModal, jobApplicantModal, jobListingModal } from "../db.js";
 import { JWT_SECRET, saltrounds } from "../index.js";
 import { adminMiddleware } from "../middleware.js";
 const adminRouter = express.Router();
@@ -214,9 +214,29 @@ adminRouter.get("/admins", adminMiddleware, async (req, res) => {
         if (!company) {
             return res.status(404).json({ message: "Company not found!" });
         }
-        res.status(200).json({
+        return res.status(200).json({
             message: "Admins retrieved successfully",
             admins: company.admins
+        });
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+adminRouter.get("/application", adminMiddleware, async (req, res) => {
+    try {
+        const jobId = req.query.jobId?.toString();
+        if (!jobId) {
+            return res.status(400).json({ message: "Job ID is required" });
+        }
+        const response = await jobApplicantModal
+            .findOne({ jobId })
+            .select("users")
+            .populate("users.userId", "fullName");
+        return res.status(200).json({
+            message: "Applications retrieved successfully",
+            application: response,
         });
     }
     catch (error) {

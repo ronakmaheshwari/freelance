@@ -1,7 +1,7 @@
 import express from "express"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
-import { adminModal, companyModal, jobListingModal, userModal } from "../db.js"
+import { adminModal, companyModal, jobApplicantModal, jobListingModal, userModal } from "../db.js"
 import { JWT_SECRET, saltrounds } from "../index.js"
 import { adminMiddleware, authMiddleware } from "../middleware.js"
 
@@ -279,7 +279,7 @@ adminRouter.get("/admins", adminMiddleware, async (req: any, res: any) => {
         }
 
 
-        res.status(200).json({
+        return res.status(200).json({
             message: "Admins retrieved successfully",
             admins: company.admins
         });
@@ -290,6 +290,28 @@ adminRouter.get("/admins", adminMiddleware, async (req: any, res: any) => {
     }
 });
 
-
+adminRouter.get("/application", adminMiddleware, async (req: any, res: any) => {
+    try {
+      const jobId = req.query.jobId?.toString(); 
+  
+      if (!jobId) {
+        return res.status(400).json({ message: "Job ID is required" });
+      }
+  
+      const response = await jobApplicantModal
+        .findOne({ jobId })
+        .select("users")
+        .populate("users.userId", "fullName");
+  
+      return res.status(200).json({
+        message: "Applications retrieved successfully",
+        application: response,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  });
+  
 
 export {adminRouter}
