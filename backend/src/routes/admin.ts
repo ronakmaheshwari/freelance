@@ -311,7 +311,45 @@ adminRouter.get("/application", adminMiddleware, async (req: any, res: any) => {
       console.error(error);
       return res.status(500).json({ message: "Internal Server Error" });
     }
-  });
-  
+});
+
+type stats = "accepted" | "pending" | "rejected";
+
+interface Check {
+  jobId: string;
+  userId: string;
+  status: stats;
+}
+
+adminRouter.post("/selection", adminMiddleware, async (req: any, res: any) => {
+  try {
+    const { jobId, userId, status }: Check = req.body;
+
+    if (!jobId || !userId || !status) {
+      return res.status(400).json({ message: "Missing jobId, userId, or status" });
+    }
+
+    const updated = await jobApplicantModal.findOneAndUpdate(
+      { jobId, "users.userId": userId },
+      { $set: { "users.$.status": status } },
+      { new: true }
+    ).populate("users.userId", "fullName");
+
+    if (!updated) {
+      return res.status(404).json({ message: "Job or user not found" });
+    }
+
+    const updatedUser = updated.users.find((u: any) => u.userId._id.toString() === userId);
+
+    return res.status(200).json({
+      message: `User status updated to ${status}`,
+      updatedUser,
+    });
+
+  } catch (error) {
+    console.error("Error in /selection:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
 
 export {adminRouter}

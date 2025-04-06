@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-mongoose.connect("mongodb+srv://ronak:<mongoPassword>/freelance")
+mongoose.connect("")
 
 const userSchema = new Schema({
     fullName: {type:String, required:true},
