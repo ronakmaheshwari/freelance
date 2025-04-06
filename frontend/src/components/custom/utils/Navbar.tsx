@@ -8,9 +8,10 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { Globe } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate =useNavigate();
   return (
     <header className="w-full border-b bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -92,10 +93,10 @@ const Navbar = () => {
 
         {/* Right - Buttons*/}
         <div className="flex items-center space-x-4">
-          <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
+          <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50" onClick={()=>{navigate('/signin')}}>
             Log in
           </Button>
-          <Button className="bg-blue-600 text-white shadow-lg hover:bg-blue-700">
+          <Button className="bg-blue-600 text-white shadow-lg hover:bg-blue-700" onClick={()=>{navigate('/signup')}}>
             Sign Up
           </Button>
         </div>

@@ -14,6 +14,7 @@ interface Box {
           type={type}
           placeholder={placeholder}
           onChange={onChange}
+          value={value}
           className="w-full px-4 py-2 text-sm border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-200 bg-white text-gray-900"
         />
       </div>
