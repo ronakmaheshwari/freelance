@@ -1,7 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-mongoose.connect("")
-
 const userSchema = new Schema({
     fullName: {type:String, required:true},
     email: {type:String,unique:true, required:true},
