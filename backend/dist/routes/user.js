@@ -67,18 +67,17 @@ userRouter.post("/signin", async (req, res) => {
 userRouter.get("/applied", authMiddleware, async (req, res) => {
     try {
         const userId = req.userId;
-        const applications = await jobApplicantModal.find({
-            "users.userId": userId
-        });
+        const applications = await jobApplicantModal
+            .find({ "users.userId": userId }).populate("jobId", "title");
         return res.status(200).json({
             message: "Fetched applied jobs successfully.",
-            applications
+            applications,
         });
     }
     catch (error) {
         console.error(error);
         return res.status(500).json({
-            message: "Internal server error."
+            message: "Internal server error.",
         });
     }
 });
