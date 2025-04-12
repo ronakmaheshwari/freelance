@@ -83,7 +83,7 @@ userRouter.get("/applied", authMiddleware, async (req: any, res: any) => {
       const userId = req.userId;
   
       const applications = await jobApplicantModal
-        .find({ "users.userId": userId }).populate("jobId","title")
+        .find({ "users.userId": userId }).populate("jobId","title location jobType")
 
       return res.status(200).json({
         message: "Fetched applied jobs successfully.",
