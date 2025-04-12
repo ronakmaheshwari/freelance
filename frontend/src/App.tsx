@@ -7,6 +7,9 @@ import Signin from './pages/Signin'
 import {  ToastContainer } from "react-toastify"
 import CompanySignup from './pages/CompanySignup'
 import AdminSignin from './pages/AdminSignin'
+import Dashboard from './pages/Dashboard'
+import UpdateProfile from './pages/UpdatePage'
+import Applied from './pages/UserApplied'
 
 function App() {
   return (
@@ -20,6 +23,10 @@ function App() {
           <Route path='/signin' element={<Signin />} />
           <Route path='/admin/signup' element={<CompanySignup />} />
           <Route path='/admin/signin' element={<AdminSignin />} />
+          <Route path='/dashboard' element={<Dashboard/>} />
+          <Route path='/apply/:jobId' element={<Signin />} />
+          <Route path='/update' element={<UpdateProfile />} />
+          <Route path='/applied' element={<Applied />} />
         </Routes>
       </BrowserRouter>
     </div>
