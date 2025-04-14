@@ -8,10 +8,18 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { Globe } from "lucide-react";
+import { useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const Navbar = () => {
+interface NavSchema{
+  type?: "login" | "logout"
+}
+
+const Navbar = ({type}: NavSchema) => {
   const navigate =useNavigate();
+  const handle = useCallback(async()=>{
+    localStorage.removeItem("token");
+  },[])
   return (
     <header className="w-full border-b bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -93,12 +101,20 @@ const Navbar = () => {
 
         {/* Right - Buttons*/}
         <div className="flex items-center space-x-4">
-          <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50" onClick={()=>{navigate('/signin')}}>
-            Log in
-          </Button>
-          <Button className="bg-blue-600 text-white shadow-lg hover:bg-blue-700" onClick={()=>{navigate('/signup')}}>
-            Sign Up
-          </Button>
+          {type === "login" ? (<>
+            <Button variant="outline" className="border-red-600 text-red-600 hover:text-zinc-50 hover:text-black-50" onClick={() => { navigate('/') }}>
+                Log Out
+              </Button>
+          </>) : (
+            <>
+              <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50" onClick={() => { navigate('/signin') }}>
+                Log in
+              </Button>
+              <Button className="bg-blue-600 text-white shadow-lg hover:bg-blue-700" onClick={() => { navigate('/signup') }}>
+                Sign Up
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>

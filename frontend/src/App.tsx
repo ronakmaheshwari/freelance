@@ -10,7 +10,7 @@ import AdminSignin from './pages/AdminSignin'
 import Dashboard from './pages/Dashboard'
 import UpdateProfile from './pages/UpdatePage'
 import Applied from './pages/UserApplied'
-import Apply from './components/custom/Apply/Apply'
+import Apply from './components/custom/Apply/apply'
 
 
 function App() {

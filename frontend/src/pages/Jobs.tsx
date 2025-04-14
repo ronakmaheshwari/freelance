@@ -6,7 +6,7 @@ import Navbar from "@/components/custom/utils/Navbar"
 const Jobs = () => {
   return (
     <div>
-        <Navbar/>
+        <Navbar type="login"/>
         <JobListings/>
         <Footer/>
     </div>

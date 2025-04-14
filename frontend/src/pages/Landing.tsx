@@ -10,7 +10,7 @@ import Footer from "@/components/custom/utils/Footer"
 const Landing = () => {
   return (
     <div>
-        <Navbar/>
+        <Navbar type="logout"/>
         <Hero/>
         <Techjobs/>
         <Banner/>
