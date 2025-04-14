@@ -1,12 +1,15 @@
 import express from "express";
 import { jobApplicantModal, jobListingModal } from "../db.js";
 import { authMiddleware } from "../middleware.js";
+import mongoose from "mongoose";
 const listingRouter = express.Router();
 listingRouter.get("/", authMiddleware, async (req, res) => {
     try {
         const filter = req.query.filter?.toString() || "";
+        const isValidObjectId = mongoose.Types.ObjectId.isValid(filter);
         const jobs = await jobListingModal.find({
             $or: [
+                ...(isValidObjectId ? [{ _id: new mongoose.Types.ObjectId(filter) }] : []),
                 { title: { $regex: filter, $options: "i" } },
                 { description: { $regex: filter, $options: "i" } }
             ]

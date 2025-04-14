@@ -10,6 +10,8 @@ import AdminSignin from './pages/AdminSignin'
 import Dashboard from './pages/Dashboard'
 import UpdateProfile from './pages/UpdatePage'
 import Applied from './pages/UserApplied'
+import Apply from './components/custom/Apply/Apply'
+
 
 function App() {
   return (
@@ -24,7 +26,7 @@ function App() {
           <Route path='/admin/signup' element={<CompanySignup />} />
           <Route path='/admin/signin' element={<AdminSignin />} />
           <Route path='/dashboard' element={<Dashboard/>} />
-          <Route path='/apply/:jobId' element={<Signin />} />
+          <Route path='/apply/:jobId' element={<Apply />} />
           <Route path='/update' element={<UpdateProfile />} />
           <Route path='/applied' element={<Applied />} />
         </Routes>

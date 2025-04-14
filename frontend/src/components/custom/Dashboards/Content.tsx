@@ -30,7 +30,7 @@ export default function Content() {
 
   return (
     <div className="w-full h-full bg-zinc-50 shadow-md rounded-xl p-6 flex justify-center items-start overflow-y-scroll">
-      <div className="w-full max-w-4xl flex flex-col gap-4">
+      <div className="w-full max-w-8xl flex flex-col gap-4">
       {content.length > 0 ? (
         content.map((job) => (
           <JobCard
@@ -44,7 +44,7 @@ export default function Content() {
             company={job.companyId.name}  
             creator={job.creatorId.fullName} 
             companyLogo={<Briefcase />} 
-            onClick={() => navigate(`/apply/${job._id}`)}
+            onClick={() => {navigate(`/apply/${job._id}`)}}
           />
         ))
       ) : (

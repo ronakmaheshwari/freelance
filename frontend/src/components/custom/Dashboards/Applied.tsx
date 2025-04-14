@@ -29,7 +29,7 @@ export default function AppliedContent() {
 
   return (
     <div className="w-full h-full bg-zinc-50 shadow-md rounded-xl p-6 flex justify-center items-start overflow-y-scroll">
-      <div className="w-full max-w-4xl flex flex-col gap-4">
+      <div className="w-full max-w-8xl flex flex-col gap-4">
         {loading ? (
           Array(5).fill(0).map((_, idx) => <JobCardSkeleton key={idx} />)
         ) : applications.length > 0 ? (
