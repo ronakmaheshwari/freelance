@@ -25,7 +25,7 @@ export default function ApplicationTable({ users, jobId }: Props) {
     try {
       setLoading(applicationId);
       await axios.post(
-        `${Backend_Url}/admin/application/status/${applicationId}`,
+        `${Backend_Url}/admin/selection`,
         {
           jobId,
           userId,

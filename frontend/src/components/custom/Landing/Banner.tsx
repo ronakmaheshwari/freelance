@@ -1,7 +1,9 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom";
 
 const Banner = () => {
+    const navigate = useNavigate();
     return (
         <section className="relative bg-blue-800 py-30 px-6 text-white text-center shadow-lg overflow-hidden">
             {/* Mountain Background Shapes */}
@@ -23,7 +25,7 @@ const Banner = () => {
                         placeholder="Enter your company email"
                         className="flex-1 px-4 py-8 text-gray-800 focus:outline-none rounded-full border-none"
                     />
-                    <Button className="absolute right-0 bg-blue-600 hover:bg-blue-700 text-white font-bold px-7 py-8 rounded-full shadow-lg">
+                    <Button className="absolute right-0 bg-blue-600 hover:bg-blue-700 text-white font-bold px-7 py-8 rounded-full shadow-lg" onClick={()=>{navigate("/admin/signup")}}>
                         Register
                     </Button>
                 </div>
