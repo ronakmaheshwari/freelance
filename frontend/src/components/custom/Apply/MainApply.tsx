@@ -41,7 +41,7 @@ export default function MainApply({ job }: JobProps) {
             }
         })
       if(response.status === 200){
-        toast.success('Signup Successful', {
+        toast.success('Application Successfully Sent', {
           position: "bottom-right",
           autoClose: 2000,
           hideProgressBar: true,
@@ -78,7 +78,7 @@ export default function MainApply({ job }: JobProps) {
   }
 
   return (
-    <div className="flex flex-col w-full h-full bg-zinc-50 shadow-md p-4 gap-4 rounded-md">
+    <div className="flex flex-col w-full h-full bg-zinc-50 shadow-md p-4 gap-4 rounded-md overflow-y-scroll">
       <div className="bg-gradient-to-r from-blue-500 to-blue-500 w-full h-[200px] rounded-md flex items-center justify-center p-6">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-white mb-2">{job.title}</h1>

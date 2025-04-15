@@ -45,6 +45,7 @@ export default function Content() {
             creator={job.creatorId.fullName} 
             companyLogo={<Briefcase />} 
             onClick={() => {navigate(`/apply/${job._id}`)}}
+            type="user"
           />
         ))
       ) : (

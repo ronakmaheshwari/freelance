@@ -37,7 +37,7 @@ export default function AdminSignupCard({ type }: SignupCardProps) {
       if (response.status === 200) {
         const jwt = response.data.token;
         localStorage.setItem("token", jwt);
-        navigate("/jobs");
+        navigate("/admin/dashboard");
 
         toast.success("Signup Successful", {
           position: "bottom-right",
@@ -77,7 +77,7 @@ export default function AdminSignupCard({ type }: SignupCardProps) {
       if (response.status === 200) {
         const jwt = response.data.token;
         localStorage.setItem("token", jwt);
-        navigate("/jobs");
+        navigate("/admin/dashboard");
 
         toast.success("Signin Successful", {
           position: "bottom-right",

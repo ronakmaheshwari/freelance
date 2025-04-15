@@ -12,13 +12,11 @@ interface JobCardProps {
   salaryRange: { min: number; max: number }; 
   jobType: string;
   postedDate: string;
-  creator: string;
   companyLogo?: React.ReactNode;
   onClick: () => void;
-  type: "user" | "admin"
 }
 
-export default function JobCard({
+export default function AdminCard({
   company,
   title,
   description,
@@ -26,10 +24,8 @@ export default function JobCard({
   salaryRange,
   jobType,
   postedDate,
-  creator,
   companyLogo,
   onClick,
-  type
 }: JobCardProps) {
   return (
     <Card className="w-full rounded-xl shadow border border-gray-200">
@@ -66,16 +62,15 @@ export default function JobCard({
             <span className="ml-auto text-xs text-gray-400">{postedDate}</span>
           </div>
 
-          <p className="mt-2 text-sm text-gray-400">Posted by: {creator}</p>
         </div>
 
-        {type === "user" ? (<> <Button
+         <Button
           size="sm"
           onClick={onClick}
           className="ml-4 whitespace-nowrap text-sm font-medium"
         >
-          Apply Now
-        </Button></>): null}
+          Get Users
+        </Button>
       </CardContent>
     </Card>
   );
