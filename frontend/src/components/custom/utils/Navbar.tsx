@@ -102,7 +102,9 @@ const Navbar = ({type}: NavSchema) => {
         {/* Right - Buttons*/}
         <div className="flex items-center space-x-4">
           {type === "login" ? (<>
-            <Button variant="outline" className="border-red-600 text-red-600 hover:text-zinc-50 hover:text-black-50" onClick={() => { navigate('/') }}>
+            <Button variant="outline" className="border-red-600 text-red-600 hover:text-zinc-50 hover:text-black-50" onClick={() => { 
+              handle()
+              navigate('/') }}>
                 Log Out
               </Button>
           </>) : (
