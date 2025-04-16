@@ -9,19 +9,19 @@
 Easily post, edit, and manage job openings.
 
 ### 2. 👤 Candidate Dashboard  
-Allow applicants to create profiles, upload resumes, and track their application status.
+Applicants can create profiles, upload resumes, and track application status.
 
 ### 3. 🧑‍💼 Recruiter Dashboard  
 Manage applicants, view candidate profiles, and track hiring pipelines.
 
 ### 4. 🔐 Role-Based Access  
-Separate interfaces and permissions for Admins, Recruiters, and Candidates.
+Separate views and permissions for Admins, Recruiters, and Candidates.
 
 ### 5. 🔍 Search & Filters  
-Quickly search for jobs or candidates using keywords, tags, and categories.
+Quickly find jobs or candidates using advanced filters and tags.
 
 ### 6. 📄 Resume Viewer  
-Built-in PDF viewer for reviewing candidate resumes directly on the platform.
+Built-in PDF viewer for seamless resume reviewing.
 
 ## 📡 API Reference
 
@@ -31,28 +31,33 @@ Built-in PDF viewer for reviewing candidate resumes directly on the platform.
 ## 🛠 Tech Stack
 
 - **Frontend:** React.js, TypeScript, Tailwind CSS  
-- **Backend:**  Node.js, Express.js  
-- **Database:** MongoDB 
+- **Backend:** Node.js, Express.js  
+- **Database:** MongoDB  
 - **Authentication:** JWT, Zod  
 - **Storage:** Supabase Storage  
 - **Deployment:** Vercel (Frontend), Render (Backend)
 
 ## ⚡ Problem it Solves
 
-- **Fragmented Hiring Processes** – Centralizes job postings, applications, and candidate tracking.  
-- **Limited Candidate Insights** – Gives recruiters a full profile and resume viewer in one place.  
-- **Poor UX in Job Portals** – A clean, responsive interface with search & filters for better usability.
+- **Fragmented Hiring Processes** – Centralized dashboard for posting jobs and managing applicants.  
+- **Limited Candidate Insights** – Rich profiles and resume viewing features.  
+- **Inefficient Job Portals** – Fast, clean UI/UX for both employers and job seekers.
 
 ## 🚧 Challenges & Showstoppers
 
-- **Real-Time Application Updates** – Keeping dashboards synced across users.  
-- **Secure Authentication Flows** – Managing access for different user roles securely.  
-- **Scalable Infrastructure** – Optimizing queries and performance as data scales.
+- **Real-Time Application Updates** – Ensuring dashboards stay synced for recruiters and candidates.  
+- **Secure Authentication Flows** – Managing access control across multiple roles.  
+- **Scalable Infrastructure** – Performance optimization as usage scales.
 
 ## 🚀 Deployment
 
-### Frontend
+### Backend
 ```bash
+cd backend
+npm install
+npm run dev
+
+### FrontEnd
 cd frontend
 npm install
 npm run dev
