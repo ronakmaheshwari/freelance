@@ -403,7 +403,6 @@ const ronak = (fullName: string, position: string) =>`
 
 adminRouter.post("/email",adminMiddleware,async (req:any, res:any) => {
   const { email, fullName } = req.body;
-  console.log(req.body);
   try {
     const html = ronak(fullName, "Your Position"); 
     await resend.emails.send({

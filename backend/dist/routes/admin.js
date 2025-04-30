@@ -296,7 +296,7 @@ const ronak = (fullName, position) => `
         Please click the button below to visit your dashboard and proceed with the next steps.
       </p>
       <div style="text-align: center; margin: 30px 0;">
-        <a href="https://hirely.10xdevs.com" style="background-color: #4CAF50; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-size: 16px;">
+        <a href="https://hirely.10xdevs.me" style="background-color: #4CAF50; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-size: 16px;">
           View Offer
         </a>
       </div>
@@ -317,7 +317,7 @@ adminRouter.post("/email", adminMiddleware, async (req, res) => {
     try {
         const html = ronak(fullName, "Your Position");
         await resend.emails.send({
-            from: "onboarding@resend.dev",
+            from: "onboarding@hire.10xdevs.me",
             to: email,
             subject: "You're Hired!",
             html
