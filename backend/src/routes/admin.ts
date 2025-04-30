@@ -5,8 +5,10 @@ import bcrypt from "bcryptjs";
 import { adminModal, companyModal, jobApplicantModal, jobListingModal, userModal } from "../db.js"
 import { JWT_SECRET, saltrounds } from "../index.js"
 import { adminMiddleware, authMiddleware } from "../middleware.js"
+import { Resend } from "resend";
 
 const adminRouter = express.Router()
+const resend = new Resend(process.env.Resend_Key);
 
 adminRouter.post("/signup", async (req: any, res: any) => {
     try {
@@ -350,6 +352,70 @@ adminRouter.post("/selection", adminMiddleware, async (req: any, res: any) => {
   } catch (error) {
     console.error("Error in /selection:", error);
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+adminRouter.post("/userdetail", adminMiddleware, async (req: any, res: any) => {
+    try {
+      const { userId } = req.body;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+
+      const user = await userModal.findById(userId).select("email");
+      if (!user) {
+        return res.status(404).json({ message: "Invalid User ID" });
+      }
+      
+      return res.status(200).json({ email: user.email });
+    } catch (error) {
+      console.error("Error in /userdetail:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  });
+
+const ronak = (fullName: string, position: string) =>`
+  <div style="font-family: Arial,t sans-serif; color: #333; background-color: #f4f4f4; padding: 40px;">
+    <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+      <h2 style="color: #4CAF50;">🎉 Congratulations, ${fullName}!</h2>
+      <p style="font-size: 16px; line-height: 1.6;">
+        We’re excited to let you know that you’ve been <strong>selected</strong> for the role of <strong>${position}</strong> at <strong>Hirely</strong>.
+      </p>
+      <p style="font-size: 16px; line-height: 1.6;">
+        Please click the button below to visit your dashboard and proceed with the next steps.
+      </p>
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="https://hirely.10xdevs.com" style="background-color: #4CAF50; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-size: 16px;">
+          View Offer
+        </a>
+      </div>
+      <p style="font-size: 14px; color: #888;">
+        If you have any questions, feel free to reply to this email.<br/>
+        Welcome aboard! 🚀
+      </p>
+      <hr style="margin-top: 30px;" />
+      <p style="font-size: 12px; color: #aaa; text-align: center;">
+        Sent with ❤️ by Hirely
+      </p>
+    </div>
+  </div>
+`;
+
+adminRouter.post("/email",adminMiddleware,async (req:any, res:any) => {
+  const { email, fullName } = req.body;
+  console.log(req.body);
+  try {
+    const html = ronak(fullName, "Your Position"); 
+    await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: email,
+      subject: "You're Hired!",
+      html
+    });
+    return res.status(200).json({ message: "Email sent" });
+  } catch (error) {
+      console.error('Resend API Error:', error);
+      return res.status(500).json({ message: "Failed to send email", error: error });
   }
 });
 

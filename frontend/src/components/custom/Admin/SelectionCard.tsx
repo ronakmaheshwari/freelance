@@ -5,6 +5,7 @@ import Backend_Url from "@/config";
 import { useParams } from "react-router-dom";
 import ApplicationTable from "./ApplicationTable";
 
+
 interface User {
   userId: {
     _id: string;
@@ -23,6 +24,7 @@ interface ApplicationResponse {
     users: User[];
   };
 }
+
 
 export default function ApplicationCard() {
   const { jobId } = useParams();

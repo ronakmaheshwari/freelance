@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { useState } from "react";
 import Backend_Url from "@/config";
 
+
 interface Props {
   jobId: string;
   users: {
@@ -37,6 +38,31 @@ export default function ApplicationTable({ users, jobId }: Props) {
           },
         }
       );
+
+      const response = await axios.post(`${Backend_Url}/admin/userdetail`, {
+        userId
+      }, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        }
+      });
+      
+      const userEmail = response.data?.email;
+      
+      if (!userEmail) {
+        throw new Error("Email not found for the given userId");
+      }
+
+      await axios.post(`${Backend_Url}/admin/email`, {
+        email: userEmail,
+        fullName: "Ronak Maheshwari",
+      },{
+        headers:{
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        }
+      }
+    );
+
       toast.success(`Application ${newStatus}`, {
         position: "bottom-right",
         autoClose: 1500,
